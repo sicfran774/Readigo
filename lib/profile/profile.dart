@@ -3,25 +3,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:testapp3/books/book_tile.dart';
 
-class profilescreen extends StatefulWidget {
-  const profilescreen({super.key});
+import '../util/firebase_utils.dart';
+
+class ProfileScreen extends StatefulWidget {
+  final String friendCode;
+
+  const ProfileScreen({super.key, required this.friendCode});
 
   @override
-  State<profilescreen> createState() => _profilescreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _profilescreenState extends State<profilescreen> {
-  Future<List<dynamic>> getbookstolibrary()async{
-    try {
-      final useremail=FirebaseAuth.instance.currentUser!.email;//get current users email
-      DocumentReference doc=FirebaseFirestore.instance.collection("users").doc(useremail);//get users data in firebase
-      final userData =await doc.get();
-      final books=userData["books"]as List<dynamic>;
-      return books;
-    } catch (e) {
-      throw Exception("Error: $e");
-    }
-  }
+class _ProfileScreenState extends State<ProfileScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,7 +114,7 @@ class _profilescreenState extends State<profilescreen> {
             ),
             Expanded(
                 child: FutureBuilder(
-                    future: getbookstolibrary(),
+                    future: FirebaseUtils.getUserBooks(widget.friendCode),
                     builder: (context, snapshot) {
                       if(snapshot.connectionState == ConnectionState.waiting){
                         return Center(

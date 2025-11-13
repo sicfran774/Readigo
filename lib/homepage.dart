@@ -4,6 +4,7 @@ import 'package:testapp3/books/bookscreen.dart';
 import 'package:testapp3/friends/friends.dart';
 import 'package:testapp3/profile/profile.dart';
 import 'package:testapp3/quiz/generate_quiz.dart';
+import 'package:testapp3/util/firebase_utils.dart';
 
 import 'gradebook.dart';
 
@@ -16,12 +17,7 @@ class homepage extends StatefulWidget {
 }
 
 class _homepageState extends State<homepage> {
-  List<Widget> pages=[
-   generatequizscreen(),
-    friendspage(),
-    bookscreen(),
-    profilescreen(),
-  ];
+  List<Widget> pages=[];
 
   late int selectedpage=widget.initialpage;
   void onItemTap(int index){
@@ -29,6 +25,30 @@ class _homepageState extends State<homepage> {
       selectedpage=index;
     });
   }
+
+  Future<void> loadPages() async{
+    String? currentUserFriendCode = await FirebaseUtils.getCurrentUserFriendCode();
+
+    if (currentUserFriendCode != null) {
+      setState(() {
+        pages=[
+          generatequizscreen(),
+          friendspage(),
+          bookscreen(),
+          ProfileScreen(friendCode: currentUserFriendCode),
+        ];
+      });
+    } else {
+      throw Exception("Failed to load profile");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadPages();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +70,8 @@ class _homepageState extends State<homepage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: (pages.isEmpty) ? null :
+        BottomNavigationBar(
         backgroundColor: Colors.grey,selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.teal,
         currentIndex: selectedpage,
@@ -64,7 +85,7 @@ class _homepageState extends State<homepage> {
       ),
       body: Center(
         child: Container(
-          child: pages[selectedpage],
+          child: (pages.isEmpty) ? CircularProgressIndicator() : pages[selectedpage],
         ),
       ),
     );

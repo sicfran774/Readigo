@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:testapp3/util/firebase_utils.dart';
 import 'package:testapp3/util/google_services.dart';
 
 import 'get_started.dart';
@@ -27,7 +28,7 @@ class _CreateAccountState extends State<Createaccount> {
         email: email,
         password: password,
       );
-      GoogleServices.adduser(username, email);
+      FirebaseUtils.adduser(username, email);
     } on FirebaseAuthException catch (e) {
       print('Error: ${e.code} - ${e.message}');
     }
