@@ -33,7 +33,7 @@ class _homepageState extends State<homepage> {
       setState(() {
         pages=[
           generatequizscreen(),
-          friendspage(),
+          FriendsPage(friendCode: currentUserFriendCode),
           bookscreen(),
           ProfileScreen(friendCode: currentUserFriendCode),
         ];

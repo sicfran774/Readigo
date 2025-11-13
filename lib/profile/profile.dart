@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:testapp3/books/book_tile.dart';
 
+import '../homepage.dart';
 import '../util/firebase_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -130,7 +131,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       final querySnapshot = snapshot.data;
                       if (querySnapshot == null || querySnapshot.isEmpty) {
-                        return Center(child: Text("No books read so far."));
+                        return Center(child: Column(
+                          children: [
+                            Text("No books read so far."),
+                            TextButton(
+                                onPressed: (){
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>homepage(initialpage: 2)));
+                                },
+                                style: ButtonStyle(
+                                  minimumSize: WidgetStateProperty.all(Size.zero), // Removes default minimum size
+                                  padding: WidgetStateProperty.all(EdgeInsets.zero), // Removes default padding
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                child: Text("Tap here to add a book!",style: TextStyle(color: Color(0xff0088FF)),)
+                            ),
+                          ],
+                        ));
                       }
 
                       return ListView.builder(

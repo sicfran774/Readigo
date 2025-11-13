@@ -90,5 +90,13 @@ class FirebaseUtils {
     }
   }
 
-
+  static Future<List<dynamic>> getUserFriends(String friendCode) async {
+    try {
+      final userData = await getUserData(friendCode);
+      final friends=userData["friends"];
+      return friends;
+    } catch (e) {
+      throw Exception("Failed to fetch user's friends: $e");
+    }
+  }
 }

@@ -1,14 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:testapp3/util/firebase_utils.dart';
 
-class friendspage extends StatefulWidget {
-  const friendspage({super.key});
+class FriendsPage extends StatefulWidget {
+  final String friendCode;
+
+  const FriendsPage({super.key, required this.friendCode});
 
   @override
-  State<friendspage> createState() => _friendspageState();
+  State<FriendsPage> createState() => _FriendsPageState();
 }
 
-class _friendspageState extends State<friendspage> {
+class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -43,30 +46,43 @@ class _friendspageState extends State<friendspage> {
             ),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                friendtile(
+            child: FutureBuilder(
+              future: FirebaseUtils.getUserFriends(widget.friendCode),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text("No friends :("));
+                }
+                final userFriends = snapshot.data!;
 
-                  profilepic: 'https://imgcdn.stablediffusionweb.com/2024/4/15/437c2a91-01ea-4d6b-b7c4-d489155207f7.jpg',
-username: "Dogg_12323", message: 'HIII!!!!', friendcode: '#00001',
-
-                ),
-                friendtile(
-
-                  profilepic: 'https://imgcdn.stablediffusionweb.com/2024/4/15/437c2a91-01ea-4d6b-b7c4-d489155207f7.jpg',
-                  username: "Dogg_12323", message: 'HIII!!!!', friendcode: '#00002',
-
-                ),
-                friendtile(
-
-                  profilepic: 'https://imgcdn.stablediffusionweb.com/2024/2/23/da8fbab2-4c52-469c-8f91-437b89850f61.jpg',
-                  username: "Cattt_12323", message: ':(((!', friendcode: '#00003',
-
-                ),
-
-
-
-              ],
+                return ListView(
+                  children: [
+                    friendtile(
+                
+                      profilepic: 'https://imgcdn.stablediffusionweb.com/2024/4/15/437c2a91-01ea-4d6b-b7c4-d489155207f7.jpg',
+                username: "Dogg_12323", message: 'HIII!!!!', friendcode: '#00001',
+                
+                    ),
+                    friendtile(
+                
+                      profilepic: 'https://imgcdn.stablediffusionweb.com/2024/4/15/437c2a91-01ea-4d6b-b7c4-d489155207f7.jpg',
+                      username: "Dogg_12323", message: 'HIII!!!!', friendcode: '#00002',
+                
+                    ),
+                    friendtile(
+                
+                      profilepic: 'https://imgcdn.stablediffusionweb.com/2024/2/23/da8fbab2-4c52-469c-8f91-437b89850f61.jpg',
+                      username: "Cattt_12323", message: ':(((!', friendcode: '#00003',
+                
+                    ),
+                
+                
+                
+                  ],
+                );
+              }
             ),
           )
         ],
