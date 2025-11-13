@@ -23,7 +23,7 @@ class BookTile extends StatelessWidget {
           pages: pages,
           grade: grade,
           bookImageurl: bookImageurl,
-          shopurl:shopurl,review: true,rating: rating,ReviewText: ReviewText
+          shopurl:shopurl,review: review,rating: rating,ReviewText: ReviewText
         )));
       },
       child: Container(

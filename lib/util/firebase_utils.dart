@@ -7,10 +7,12 @@ class FirebaseUtils {
   static Future<void> adduser(String? username,String email)async{
     CollectionReference users= FirebaseFirestore.instance.collection("users");
     try {
-      final newFriendCode = await generateUniqueFriendCode();
-      DocumentSnapshot docRef=await users.doc(newFriendCode).get();
+      String? friendCode = await getCurrentUserFriendCode();
+      friendCode ??= await generateUniqueFriendCode();
+
+      DocumentSnapshot docRef=await users.doc(friendCode).get();
       if(!docRef.exists) {
-        users.doc(email).set({
+        users.doc(friendCode).set({
           "username": username,
           "email": email,
           "dateCreated": FieldValue.serverTimestamp(),
@@ -65,17 +67,19 @@ class FirebaseUtils {
       final userData = await doc.get() as Map<String, dynamic>;
       return userData;
     } catch (e) {
-      throw Exception("Error: $e");
+      throw Exception("Failed to fetch user data: $e");
     }
   }
 
   static Future<List<dynamic>> getUserBooks(String friendCode)async{
     try {
+      print(friendCode);
       final userData = await getUserData(friendCode);
-      final books=userData["books"]as List<dynamic>;
+      print(userData);
+      final books=userData["books"];
       return books;
     } catch (e) {
-      throw Exception("Error: $e");
+      throw Exception("Failed to fetch user's books: $e");
     }
   }
 
