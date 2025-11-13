@@ -4,24 +4,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseUtils {
-  static Future<void> adduser(String? username,String email)async{
+  static Future<bool> adduser(String? username,String email)async{
     CollectionReference users= FirebaseFirestore.instance.collection("users");
     try {
       String? friendCode = await getCurrentUserFriendCode();
-      friendCode ??= await generateUniqueFriendCode();
 
-      DocumentSnapshot docRef=await users.doc(friendCode).get();
-      if(!docRef.exists) {
-        users.doc(friendCode).set({
-          "username": username,
-          "email": email,
-          "dateCreated": FieldValue.serverTimestamp(),
-          "books": [],
-          "level": 1,
-          "friends": [],
-          "bio": "Welcome to my profile!",
-        });
+      if(friendCode == null){
+        friendCode = await generateUniqueFriendCode();
+        DocumentSnapshot docRef=await users.doc(friendCode).get();
+        if(!docRef.exists) {
+          users.doc(friendCode).set({
+            "username": username,
+            "email": email,
+            "dateCreated": FieldValue.serverTimestamp(),
+            "books": [],
+            "level": 1,
+            "friends": [],
+            "bio": "Welcome to my profile!",
+          });
+        }
       }
+
+      return true;
     } catch (e) {
       throw Exception("Error adding new user to Firestore: $e");
     }
