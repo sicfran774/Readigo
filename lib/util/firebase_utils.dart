@@ -129,4 +129,19 @@ class FirebaseUtils {
       return null;
     }
   }
+
+  static Future<void> updateUser(String friendCode, Map<String, dynamic> newData) async {
+    final users = FirebaseFirestore.instance.collection('users');
+
+    // If username is being updated, also update username_lower
+    if (newData.containsKey('username')) {
+      final username = newData['username'];
+      if (username is String) {
+        newData['username_lower'] = username.toLowerCase();
+      }
+    }
+
+    await users.doc(friendCode).update(newData);
+  }
+
 }

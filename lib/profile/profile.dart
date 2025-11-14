@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:testapp3/books/book_tile.dart';
+import 'package:testapp3/design_wrapper.dart';
+import 'package:testapp3/profile/edit_profile.dart';
 
 import '../homepage.dart';
 import '../util/firebase_utils.dart';
@@ -105,23 +105,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   child: Text("${userData["friends"].length} friends",style: TextStyle(color: Color(0xff0088FF)),)
                               ),
-                              Text(userData["bio"],style: TextStyle(fontSize: 18,fontFamily: "Voltaire"),),
+                              GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context, 
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text("${userData["username"]}'s Bio"),
+                                          content: Text(userData["bio"]),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(context),
+                                              child: Text("Close"),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                },
+                                  child: SizedBox(width: double.infinity, child: Text(userData["bio"], maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 16,fontFamily: "Voltaire"),))
+                              ),
 
 
 
                             ],
                           ),
                       ),
-                      (isOwnProfile) ? Expanded(
+                      Expanded(
                         flex: 20,
                         child: Center(
                           child: Column(
                             children: [
-                              IconButton(onPressed: (){}, icon: Icon(Icons.settings))
+                              IconButton(
+                                  onPressed: () async {
+                                    if(isOwnProfile){
+                                      final updated = await Navigator.push(
+                                          context, MaterialPageRoute(
+                                          builder: (_) => DesignWrapper(
+                                              wrappedWidget: EditProfilePage(
+                                                userData: userData,
+                                                friendCode: userData["friendCode"],
+                                              )
+                                          )
+                                      ));
+                                      if(updated){
+                                        setState(() {});
+                                      }
+                                    } else {
+
+                                    }
+                                  },
+                                  icon: Icon((isOwnProfile) ? Icons.settings : Icons.person_add)
+                              )
                             ],
                           ),
                         ),
-                      ) : Container(),
+                      ),
 
                     ],
                   );
