@@ -144,4 +144,31 @@ class FirebaseUtils {
     await users.doc(friendCode).update(newData);
   }
 
+  static Future<void> addFriend(String currentUserCode, String friendCode) async {
+    final users = FirebaseFirestore.instance.collection('users');
+
+    await users.doc(currentUserCode).update({
+      "friends": FieldValue.arrayUnion([friendCode]),
+    });
+  }
+
+  static Future<bool> isFriends(String currentUserCode, String friendCode) async {
+    final users = FirebaseFirestore.instance.collection('users');
+
+    final doc = await users.doc(currentUserCode).get();
+    if (!doc.exists) return false;
+
+    final data = doc.data()!;
+    final List friends = data["friends"] ?? [];
+
+    return friends.contains(friendCode);
+  }
+
+  static Future<void> removeFriend(String currentUserCode, String friendCode) async {
+    final users = FirebaseFirestore.instance.collection('users');
+
+    await users.doc(currentUserCode).update({
+      "friends": FieldValue.arrayRemove([friendCode]),
+    });
+  }
 }

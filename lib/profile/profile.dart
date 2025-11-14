@@ -17,11 +17,40 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isOwnProfile = false;
+  bool isFriends = false;
 
   void checkIfOwnProfile() async {
     final same = widget.friendCode == await FirebaseUtils.getCurrentUserFriendCode();
+
     setState(() {
       isOwnProfile = same;
+    });
+  }
+
+  void checkIfFriends() async {
+    final currentUser = await FirebaseUtils.getCurrentUserFriendCode();
+    final friends = await FirebaseUtils.isFriends(currentUser!, widget.friendCode);
+
+    setState(() {
+      isFriends = friends;
+    });
+  }
+
+  void addFriend() async {
+    final currentUser = await FirebaseUtils.getCurrentUserFriendCode();
+
+    await FirebaseUtils.addFriend(currentUser!, widget.friendCode);
+    setState(() {
+      checkIfFriends();
+    });
+  }
+
+  void removeFriend() async {
+    final currentUser = await FirebaseUtils.getCurrentUserFriendCode();
+
+    await FirebaseUtils.removeFriend(currentUser!, widget.friendCode);
+    setState(() {
+      checkIfFriends();
     });
   }
 
@@ -29,6 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState(){
     super.initState();
     checkIfOwnProfile();
+    checkIfFriends();
   }
 
   @override
@@ -147,14 +177,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               )
                                           )
                                       ));
-                                      if(updated){
+                                      if(updated != null && updated){
                                         setState(() {});
                                       }
+                                    } else if (isFriends){
+                                      removeFriend();
                                     } else {
-
+                                      addFriend();
                                     }
                                   },
-                                  icon: Icon((isOwnProfile) ? Icons.settings : Icons.person_add)
+                                  icon: Icon((isOwnProfile) ? Icons.settings : (isFriends) ? Icons.person_off : Icons.person_add)
                               )
                             ],
                           ),
@@ -194,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   padding: WidgetStateProperty.all(EdgeInsets.zero), // Removes default padding
                                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                child: Text("Tap here to add a book!",style: TextStyle(color: Color(0xff0088FF)),)
+                                child: (!isOwnProfile) ? Container() : Text("Tap here to add a book!",style: TextStyle(color: Color(0xff0088FF)),)
                             ),
                           ],
                         ));

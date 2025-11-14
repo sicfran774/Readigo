@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:testapp3/friends/add_friend.dart';
 import 'package:testapp3/util/firebase_utils.dart';
 
+import 'friend_tile.dart';
+
 class FriendsPage extends StatefulWidget {
   final String friendCode;
 
@@ -65,12 +67,25 @@ class _FriendsPageState extends State<FriendsPage> {
                   }
                   final userFriends = snapshot.data!;
 
-                  return ListView(
-                    children: [
-
-
-
-                    ],
+                  return ListView.builder(
+                    itemCount: userFriends.length,
+                    itemBuilder: (context, index) {
+                      final friendCode = userFriends[index];
+                      return FutureBuilder(
+                        future: FirebaseUtils.getUserData(friendCode),
+                        builder: (context, asyncSnapshot) {
+                          if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                          final friend = asyncSnapshot.data!;
+                          return FriendTile(
+                              profilePic: friend["profilePic"],
+                              level: friend["level"],
+                              friendCode: friend["friendCode"],
+                              username: friend["username"]);
+                        }
+                      );
+                    },
                   );
                 }
               ),

@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
         password: password,
       );
       if(mounted){
+        Navigator.pop(context);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => start_page()));
       }
     } on FirebaseAuthException catch (e) {

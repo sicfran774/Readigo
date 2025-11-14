@@ -13,7 +13,9 @@ class FriendTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DesignWrapper(wrappedWidget: ProfileScreen(friendCode: friendCode)))),
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => DesignWrapper(wrappedWidget: ProfileScreen(friendCode: friendCode))));
+      },
       child: Container(
         margin: EdgeInsets.only(top: 20),
         height: 95,
