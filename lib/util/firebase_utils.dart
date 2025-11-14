@@ -36,7 +36,7 @@ class FirebaseUtils {
   }
 
   static String generateFriendCode([int length = 5]) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // exclude 0, O, 1
     final rand = Random.secure();
     return List.generate(length, (_) => chars[rand.nextInt(chars.length)]).join();
   }
@@ -47,7 +47,7 @@ class FirebaseUtils {
     bool exists;
 
     do {
-      code = generateFriendCode(); // your existing random 5-digit generator
+      code = generateFriendCode();
       final doc = await users.doc(code).get();
       exists = doc.exists;
     } while (exists);

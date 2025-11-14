@@ -133,6 +133,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Text("Level ${userData["level"]}",style: TextStyle(fontSize: 30,fontFamily: "Voltaire",fontWeight: FontWeight.bold),),
                               TextButton(
                                   onPressed: (){
+                                    if(isOwnProfile){
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => homepage(initialpage: 1)));
+                                    }
                                   },
                                   style: ButtonStyle(
                                     minimumSize: WidgetStateProperty.all(Size.zero), // Removes default minimum size
