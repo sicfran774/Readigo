@@ -20,6 +20,8 @@ class FirebaseUtils {
             "dateCreated": FieldValue.serverTimestamp(),
             "books": [],
             "level": 1,
+            "xp": 0,
+            "next_level_xp": 100,
             "friends": [],
             "bio": "Welcome to my profile!",
             "friendCode": friendCode,
