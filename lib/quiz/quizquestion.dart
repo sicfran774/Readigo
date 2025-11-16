@@ -51,13 +51,16 @@ class QuizQuestion extends StatelessWidget {
                   width: 230,
                   height: 27,
                   child: Center(
-                    child: Text(
-                      choices[i],
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        choices[i],
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

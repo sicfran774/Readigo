@@ -32,7 +32,7 @@ class _CreateAccountState extends State<Createaccount> {
       if(await FirebaseUtils.adduser(username, email)){
         if(mounted){
           Navigator.pop(context);
-          Navigator.push(context, MaterialPageRoute(builder: (_) => LoginPage()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginPage()));
         }
       }
     } on FirebaseAuthException catch (e) {
