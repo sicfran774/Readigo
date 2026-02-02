@@ -74,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
                     }
                     final docs = snapshot.data!.docs;
                     return ListView.builder(
-                      reverse: true, // Newest messages at the bottom
+                      reverse: true,
                       itemCount: docs.length,
                       itemBuilder: (context, index) {
                         final data = docs[index].data() as Map<String, dynamic>;
