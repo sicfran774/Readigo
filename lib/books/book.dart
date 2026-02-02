@@ -22,14 +22,15 @@ class Book {
   factory Book.fromJson(Map<String, dynamic> json) {
     final volumeInfo = json["volumeInfo"] ?? {};
     final imageLinks = volumeInfo["imageLinks"] ?? {};
+    final int pages = volumeInfo["pageCount"] ?? 0;
     return Book(
       title: volumeInfo["title"] ?? "Unknown",
       authors: List<String>.from(volumeInfo["authors"] ?? []),
-      pageCount: volumeInfo["pageCount"],
-      wordcount: (volumeInfo["pageCount"])*300,
+      pageCount: pages,
+      wordcount: pages * 300,
       description: volumeInfo["description"],
-      thumbnailUrl: imageLinks["thumbnail"],
-      shopurl: volumeInfo["previewLink"]
+      thumbnailUrl: imageLinks["thumbnail"] ?? "",
+      shopurl: volumeInfo["previewLink"] ?? ""
     );
   }
 }

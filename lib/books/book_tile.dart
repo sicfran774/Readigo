@@ -40,7 +40,23 @@ class BookTile extends StatelessWidget {
 
             SizedBox(
               width: 100,
-              child:Image.network(bookImageurl)
+              height: 150,
+              child: bookImageurl.isNotEmpty
+                  ? Image.network(bookImageurl, fit: BoxFit.cover)
+                  : Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.menu_book, size: 40, color: Colors.grey[600]),
+                          SizedBox(height: 5),
+                          Text("No Cover", style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                        ],
+                      ),
+                    ),
             ),
             SizedBox(
               width: 200,

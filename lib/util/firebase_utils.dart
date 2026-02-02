@@ -173,4 +173,23 @@ class FirebaseUtils {
       "friends": FieldValue.arrayRemove([friendCode]),
     });
   }
+
+  static Future<void> deleteUser(String friendCode) async {
+    try {
+      final users = FirebaseFirestore.instance.collection('users');
+      final currentUser = FirebaseAuth.instance.currentUser;
+
+      if (currentUser == null) {
+        throw Exception("No user is currently signed in");
+      }
+
+      // Delete user document from Firestore
+      await users.doc(friendCode).delete();
+
+      // Delete Firebase Auth account
+      await currentUser.delete();
+    } catch (e) {
+      throw Exception("Failed to delete user: $e");
+    }
+  }
 }

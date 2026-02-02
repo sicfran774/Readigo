@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:testapp3/LogInPage.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:testapp3/books/book_provider.dart';
 import 'package:testapp3/books/preview.dart';
 import 'package:testapp3/gradebook.dart';
@@ -36,13 +37,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Check if user is already logged in
+    User? currentUser = FirebaseAuth.instance.currentUser;
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: LandingPage()
-
+      home: currentUser != null ? homepage(initialpage: 2) : LandingPage()
     );
   }
 }

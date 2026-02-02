@@ -12,11 +12,16 @@
 .swiftpm/
 migrate_working_dir/
 
+# Environment variables (secrets)
+.env
+assets/.env
+
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
+.claude/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -32,9 +37,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
 
-.env
-assets/.env
 
 # Symbolication related
 app.*.symbols

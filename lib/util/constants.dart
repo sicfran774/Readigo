@@ -6,7 +6,7 @@ class Constants{
     title: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Readigo",
+        Text("Bookfania",
           style: TextStyle(
               fontSize: 36,
               color: Colors.lightBlueAccent,
@@ -14,7 +14,7 @@ class Constants{
               shadows: [Shadow(color: Colors.greenAccent,offset: Offset(3, 3),blurRadius: 15)]
           ),
         ),
-        Image.asset(height: 87,"assets/images/ReadigoLogo.png")
+        Image.asset(height: 87,"assets/images/BookfaniaLogo.png")
 
       ],
     ),

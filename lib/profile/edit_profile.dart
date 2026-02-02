@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../util/firebase_utils.dart';  // adjust import
+import 'package:firebase_auth/firebase_auth.dart';
+import '../util/firebase_utils.dart';
+import '../landing.dart';
 
 class EditProfilePage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -72,6 +74,119 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
       Navigator.pop(context, true);
     }
+  }
+
+  Future<void> _showDeleteAccountDialog() async {
+    final passwordController = TextEditingController();
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Account'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'This action cannot be undone. All your data will be permanently deleted.',
+                style: TextStyle(color: Colors.red),
+              ),
+              const SizedBox(height: 20),
+              const Text('Please enter your password to confirm:'),
+              const SizedBox(height: 10),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final password = passwordController.text.trim();
+                if (password.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please enter your password')),
+                  );
+                  return;
+                }
+
+                try {
+                  // Re-authenticate user before deletion
+                  final user = FirebaseAuth.instance.currentUser;
+                  final email = user?.email;
+
+                  if (email == null) {
+                    throw Exception('No user email found');
+                  }
+
+                  final credential = EmailAuthProvider.credential(
+                    email: email,
+                    password: password,
+                  );
+
+                  await user?.reauthenticateWithCredential(credential);
+
+                  // Close the dialog
+                  Navigator.of(dialogContext).pop();
+
+                  // Delete the user
+                  await FirebaseUtils.deleteUser(widget.friendCode);
+
+                  // Navigate to landing page
+                  if (mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const LandingPage()),
+                      (route) => false,
+                    );
+                  }
+                } on FirebaseAuthException catch (e) {
+                  Navigator.of(dialogContext).pop();
+
+                  String errorMessage = 'Failed to delete account';
+                  if (e.code == 'wrong-password') {
+                    errorMessage = 'Incorrect password';
+                  } else if (e.code == 'requires-recent-login') {
+                    errorMessage = 'Please log out and log back in before deleting your account';
+                  }
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(errorMessage),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  Navigator.of(dialogContext).pop();
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Delete Account'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -171,6 +286,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
 
               const SizedBox(height: 40),
+
+              // Danger Zone - Delete Account
+              const Divider(),
+              const SizedBox(height: 20),
+              const Text(
+                "Danger Zone",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                onPressed: _showDeleteAccountDialog,
+                icon: const Icon(Icons.delete_forever, color: Colors.red),
+                label: const Text(
+                  'Delete Account',
+                  style: TextStyle(color: Colors.red),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.red),
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
