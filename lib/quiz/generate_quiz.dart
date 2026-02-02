@@ -109,18 +109,18 @@ class _generatequizscreenState extends State<generatequizscreen> {
 
 
           },
-          child: Container(
+          style: OutlinedButton.styleFrom(
+              backgroundColor: Color(0xFFC0FFC0),
+              foregroundColor: Color(0xFF41BF41)
+          ),
+          child: SizedBox(
+            width: 120, height: 50,
             child: Center(child: Text(
               "Start Quiz",
               style: TextStyle(color: Colors.black,
                   fontSize: 20,),
               textAlign: TextAlign.center,
             )),
-            width: 120, height: 50,
-          ),
-          style: OutlinedButton.styleFrom(
-              backgroundColor: Color(0xFFC0FFC0),
-              foregroundColor: Color(0xFF41BF41)
           ),
         ),
       ],

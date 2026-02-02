@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:testapp3/books/book_tile.dart';
+import 'package:testapp3/chat/ChatPage.dart';
 import 'package:testapp3/components/xp_bar.dart';
 import 'package:testapp3/design_wrapper.dart';
 import 'package:testapp3/profile/edit_profile.dart';
@@ -212,6 +213,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 }
               ),
             ),
+            (!isOwnProfile) ? ElevatedButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (_)=> ChatPage(friendCode: widget.friendCode)));
+              },
+              style: OutlinedButton.styleFrom(
+                  backgroundColor: Color(0xFFC0FFC0),
+                  foregroundColor: Color(0xFF41BF41)
+              ),
+              child: SizedBox(
+                width: 120, height: 50,
+                child: Center(child: Text(
+                  "Message",
+                  style: TextStyle(color: Colors.black,
+                    fontSize: 20,),
+                  textAlign: TextAlign.center,
+                )),
+              ),
+            ) : Container(),
             Expanded(
               flex: 10,
               child: Padding(
