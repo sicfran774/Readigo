@@ -108,7 +108,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                       final friend = friendList[index];
                       return FriendTile(
                           profilePic: friend["profilePic"],
-                          level: friend["level"],
+                          info: "Level ${friend["level"]}",
                           friendCode: friend["friendCode"],
                           username: friend["username"]);
                     },

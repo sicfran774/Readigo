@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:testapp3/chat/ChatPage.dart';
 import 'package:testapp3/design_wrapper.dart';
 import 'package:testapp3/profile/profile.dart';
 
@@ -7,14 +8,21 @@ class FriendTile extends StatelessWidget {
   final String profilePic;
   final String username;
   final String friendCode;
-  final int level;
-  const FriendTile({super.key,required this.profilePic,required this.level, required this.friendCode, required this.username});
+  final String info;
+  final bool chat;
+  const FriendTile({super.key,required this.profilePic,required this.info, required this.friendCode, required this.username,this.chat=false});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => DesignWrapper(wrappedWidget: ProfileScreen(friendCode: friendCode))));
+        if (chat){
+          Navigator.push(context, MaterialPageRoute(builder: (_) => ChatPage(friendCode: friendCode)));
+        } 
+        else{
+          Navigator.push(context, MaterialPageRoute(builder: (_) => DesignWrapper(wrappedWidget: ProfileScreen(friendCode: friendCode))));
+        }
+        
       },
       child: Container(
         margin: EdgeInsets.only(top: 20),
@@ -50,7 +58,7 @@ class FriendTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Text("Level $level")
+              Text(info)
             ],
           ),
         ),

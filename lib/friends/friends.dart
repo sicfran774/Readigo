@@ -57,7 +57,7 @@ class _FriendsPageState extends State<FriendsPage> {
                           final friend = asyncSnapshot.data!;
                           return FriendTile(
                               profilePic: friend["profilePic"],
-                              level: friend["level"],
+                              info: "Level ${friend["level"]}",
                               friendCode: friend["friendCode"],
                               username: friend["username"]);
                         }

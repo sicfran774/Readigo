@@ -58,7 +58,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: (!isLoading) ? Text("Chatting with ${friendInfo["username"]}") : CircularProgressIndicator(),
+        title: (!isLoading) ? Text("${friendInfo["username"]}") : CircularProgressIndicator(),
       ),
       body: (isLoading) ? CircularProgressIndicator() : Column(
         children: [
@@ -92,9 +92,12 @@ class _ChatPageState extends State<ChatPage> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: "Type a message...",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(49)
+                      ),
+                      
                     ),
                   ),
                 ),

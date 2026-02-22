@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:testapp3/books/bookscreen.dart';
+import 'package:testapp3/friends/chat.dart';
 import 'package:testapp3/friends/friends.dart';
 import 'package:testapp3/landing.dart';
 import 'package:testapp3/profile/profile.dart';
@@ -42,6 +43,7 @@ class _homepageState extends State<homepage> {
         pages = [
           generatequizscreen(),
           FriendsPage(friendCode: currentUserFriendCode),
+          ChatFriendPage(friendCode: currentUserFriendCode),
           bookscreen(),
           ProfileScreen(friendCode: currentUserFriendCode),
         ];
@@ -159,6 +161,10 @@ class _homepageState extends State<homepage> {
                   BottomNavigationBarItem(
                     icon: Icon(Icons.people_alt_outlined),
                     label: "friends",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.chat),
+                    label: "chats",
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.menu_book),
