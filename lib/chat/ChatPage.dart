@@ -58,7 +58,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: (!isLoading) ? Text("${friendInfo["username"]}") : CircularProgressIndicator(),
+        title: (!isLoading) ? Text(friendInfo["username"]) : CircularProgressIndicator(),
       ),
       body: (isLoading) ? CircularProgressIndicator() : Column(
         children: [
