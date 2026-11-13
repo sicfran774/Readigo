@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,24 @@ void main() {
       expect(find.text('Continue with email'), findsOneWidget);
     },
   );
+  testWidgets('Apple sign-in is offered above Google on iOS', (
+    tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    try {
+      await tester.pumpWidget(const MyApp(homeOverride: LandingPage()));
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+      expect(find.text('Continue with Apple'), findsOneWidget);
+      expect(find.text('Continue with Google'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Continue with Apple')).dy,
+        lessThan(tester.getTopLeft(find.text('Continue with Google')).dy),
+      );
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
   testWidgets('Password reset sends the account email and confirms delivery', (
     tester,
   ) async {

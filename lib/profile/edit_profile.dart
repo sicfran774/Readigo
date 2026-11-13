@@ -7,6 +7,7 @@ import 'package:testapp3/util/constants.dart';
 import 'package:testapp3/util/profile_avatar_options.dart';
 
 import '../util/firebase_utils.dart';
+import '../util/apple_services.dart';
 import '../util/google_services.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -108,9 +109,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (_deleting) return;
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
-    final useGoogle = user.providerData.any(
-      (provider) => provider.providerId == 'google.com',
-    );
+    final useApple = AppleServices.usesApple(user);
+    final useGoogle =
+        !useApple &&
+        user.providerData.any(
+          (provider) => provider.providerId == 'google.com',
+        );
+    final usePassword = !useApple && !useGoogle;
     String password = '';
     final confirmed = await showDialog<bool>(
       context: context,
@@ -121,11 +126,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  useGoogle
+                  useApple
+                      ? 'Confirm with Apple to delete your account, library, and conversations.'
+                      : useGoogle
                       ? 'Confirm with Google to delete your account, library, and conversations.'
                       : 'Enter your password to delete your account, library, and conversations.',
                 ),
-                if (!useGoogle)
+                if (usePassword)
                   TextField(
                     obscureText: true,
                     onChanged: (value) => password = value,
@@ -148,14 +155,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (confirmed != true || !mounted) return;
     setState(() => _deleting = true);
     try {
-      final credential =
-          useGoogle
-              ? await GoogleServices.credential()
-              : EmailAuthProvider.credential(
-                email: user.email!,
-                password: password,
-              );
-      await user.reauthenticateWithCredential(credential);
+      if (useApple) {
+        // Re-authenticates and revokes the Apple token (App Store 5.1.1).
+        await AppleServices.reauthenticateAndRevoke(user);
+      } else {
+        final credential =
+            useGoogle
+                ? await GoogleServices.credential()
+                : EmailAuthProvider.credential(
+                  email: user.email!,
+                  password: password,
+                );
+        await user.reauthenticateWithCredential(credential);
+      }
       await user.getIdToken(true);
       await FirebaseUtils.deleteUser(widget.friendCode);
       if (!mounted) return;

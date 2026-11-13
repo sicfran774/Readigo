@@ -4,18 +4,18 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../firebase_options.dart';
 
-class GoogleSignInResult {
+class SignInResult {
   final bool succeeded;
   final String? errorMessage;
 
-  const GoogleSignInResult._({required this.succeeded, this.errorMessage});
+  const SignInResult._({required this.succeeded, this.errorMessage});
 
-  const GoogleSignInResult.success() : this._(succeeded: true);
+  const SignInResult.success() : this._(succeeded: true);
 
-  const GoogleSignInResult.failure(String message)
+  const SignInResult.failure(String message)
     : this._(succeeded: false, errorMessage: message);
 
-  const GoogleSignInResult.cancelled() : this._(succeeded: false);
+  const SignInResult.cancelled() : this._(succeeded: false);
 }
 
 class GoogleServices {
@@ -37,50 +37,50 @@ class GoogleServices {
     return GoogleAuthProvider.credential(idToken: user.authentication.idToken);
   }
 
-  static Future<GoogleSignInResult> signInWithGoogle() async {
+  static Future<SignInResult> signInWithGoogle() async {
     try {
       await FirebaseAuth.instance.signInWithCredential(await credential());
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        return const GoogleSignInResult.failure(
+        return const SignInResult.failure(
           'Google did not return an account. Please try again.',
         );
       }
       // HomePage provisions the reader profile after authStateChanges fires.
-      return const GoogleSignInResult.success();
+      return const SignInResult.success();
     } on GoogleSignInException catch (error) {
       _logFailure('Google account selection', error.code.name);
       return switch (error.code) {
         GoogleSignInExceptionCode.canceled ||
         GoogleSignInExceptionCode
-            .interrupted => const GoogleSignInResult.cancelled(),
+            .interrupted => const SignInResult.cancelled(),
         GoogleSignInExceptionCode.clientConfigurationError ||
         GoogleSignInExceptionCode
-            .providerConfigurationError => const GoogleSignInResult.failure(
+            .providerConfigurationError => const SignInResult.failure(
           'Google sign-in needs an app configuration update. Please use email sign-in for now.',
         ),
-        _ => const GoogleSignInResult.failure(
+        _ => const SignInResult.failure(
           'Google sign-in could not be completed. Please try again.',
         ),
       };
     } on FirebaseAuthException catch (error) {
       _logFailure('Firebase authentication', error.code);
       if (error.code == 'operation-not-allowed') {
-        return const GoogleSignInResult.failure(
+        return const SignInResult.failure(
           'Google sign-in is disabled in Firebase Authentication for this project.',
         );
       }
       if (error.code == 'account-exists-with-different-credential') {
-        return const GoogleSignInResult.failure(
+        return const SignInResult.failure(
           'An account already uses this email with a different sign-in method.',
         );
       }
-      return const GoogleSignInResult.failure(
+      return const SignInResult.failure(
         'Firebase could not complete Google sign-in. Please try again.',
       );
     } catch (error) {
       _logFailure('Google sign-in', error.runtimeType.toString());
-      return const GoogleSignInResult.failure(
+      return const SignInResult.failure(
         'Google sign-in could not be completed. Please try again.',
       );
     }

@@ -711,7 +711,7 @@ class ReviewWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "review",
+            'Your Review',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -719,26 +719,33 @@ class ReviewWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 4,
-            children: List.generate(
-              rating,
-              (index) => const Icon(
-                Icons.star_rounded,
-                size: 26,
-                color: _BookPreviewState._accent,
+          Semantics(
+            label: '${rating.clamp(1, 5)} out of 5 stars',
+            child: Wrap(
+              spacing: 4,
+              children: List.generate(
+                5,
+                (index) => Icon(
+                  index < rating.clamp(1, 5)
+                      ? Icons.star_rounded
+                      : Icons.star_outline_rounded,
+                  size: 26,
+                  color: _BookPreviewState._accent,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            review,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.6,
-              color: _BookPreviewState._textMuted,
+          if (review.trim().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(
+              review,
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.6,
+                color: _BookPreviewState._textMuted,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
