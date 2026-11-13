@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:testapp3/login_page.dart';
 import 'package:testapp3/util/constants.dart';
+import 'package:testapp3/util/apple_services.dart';
 import 'package:testapp3/util/firebase_utils.dart';
 import 'package:testapp3/util/google_services.dart';
 import 'package:testapp3/util/profile_avatar_options.dart';
@@ -21,6 +22,7 @@ class _CreateAccountState extends State<Createaccount> {
   final confirmPasswordController = TextEditingController();
   String _selectedProfilePic = defaultProfileAvatar;
   bool _googleLoading = false;
+  bool _appleLoading = false;
   bool _creating = false;
 
   void _goBack() {
@@ -73,19 +75,24 @@ class _CreateAccountState extends State<Createaccount> {
   }
 
   Future<void> _continueWithGoogle() async {
-    if (_googleLoading) return;
-
-    setState(() {
-      _googleLoading = true;
-    });
-
+    if (_googleLoading || _appleLoading) return;
+    setState(() => _googleLoading = true);
     final result = await GoogleServices.signInWithGoogle();
     if (!mounted) return;
+    setState(() => _googleLoading = false);
+    _showResult(result);
+  }
 
-    setState(() {
-      _googleLoading = false;
-    });
+  Future<void> _continueWithApple() async {
+    if (_googleLoading || _appleLoading) return;
+    setState(() => _appleLoading = true);
+    final result = await AppleServices.signInWithApple();
+    if (!mounted) return;
+    setState(() => _appleLoading = false);
+    _showResult(result);
+  }
 
+  void _showResult(SignInResult result) {
     if (result.succeeded || result.errorMessage == null) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -252,8 +259,10 @@ class _CreateAccountState extends State<Createaccount> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Start faster with Google or create an account with email.',
+                          Text(
+                            AppleServices.isAvailable
+                                ? 'Start faster with Apple or Google, or create an account with email.'
+                                : 'Start faster with Google or create an account with email.',
                             style: TextStyle(
                               fontSize: 14,
                               height: 1.45,
@@ -261,6 +270,34 @@ class _CreateAccountState extends State<Createaccount> {
                             ),
                           ),
                           const SizedBox(height: 16),
+                          if (AppleServices.isAvailable) ...[
+                            OutlinedButton.icon(
+                              onPressed: _continueWithApple,
+                              icon: const Icon(Icons.apple, size: 24),
+                              label: Text(
+                                _appleLoading
+                                    ? 'Connecting to Apple...'
+                                    : 'Continue with Apple',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.white.withValues(
+                                  alpha: 0.55,
+                                ),
+                                foregroundColor: Constants.ink,
+                                iconColor: Colors.black,
+                                minimumSize: const Size.fromHeight(52),
+                                side: const BorderSide(color: Constants.border),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                           OutlinedButton(
                             onPressed: _continueWithGoogle,
                             style: OutlinedButton.styleFrom(

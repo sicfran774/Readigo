@@ -172,9 +172,21 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     return a.friendCode.compareTo(b.friendCode);
                   });
 
-            final currentRank = currentUser.actualRank;
+            // actualRank is 0 until the server ranks the reader; fall back
+            // to the reader's position in the sorted league so the header,
+            // list, and top-readers strip agree.
+            final positionInLeague =
+                currentLeagueEntries.indexWhere(
+                  (entry) => entry.friendCode == currentUser.friendCode,
+                ) +
+                1;
+            final currentRank =
+                currentUser.actualRank > 0
+                    ? currentUser.actualRank
+                    : positionInLeague;
             final status = _leagueStatusFor(
-              rank: currentRank,
+              // Promotion/demotion only applies once the server has ranked.
+              rank: currentUser.actualRank,
               leagueSize: currentUser.leagueSize,
               leagueIndex: currentLeagueIndex,
             );
@@ -234,7 +246,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                         return _buildLeaderboardTile(
                           context: context,
                           entry: entry,
-                          rank: entry.actualRank,
+                          rank:
+                              entry.actualRank > 0
+                                  ? entry.actualRank
+                                  : index + 1,
                           isCurrentUser: entry.friendCode == widget.friendCode,
                         );
                       },

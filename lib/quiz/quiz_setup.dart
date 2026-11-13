@@ -562,7 +562,13 @@ class _QuizSetupPageState extends State<QuizSetupPage> {
                 ),
                 _buildSummaryTile(
                   icon: Icons.bolt_rounded,
-                  value: '$_questionDifficulty',
+                  value:
+                      _difficultyChoices
+                          .firstWhere(
+                            (choice) => choice.value == _questionDifficulty,
+                            orElse: () => _difficultyChoices[1],
+                          )
+                          .title,
                   label: 'difficulty',
                 ),
                 _buildSummaryTile(

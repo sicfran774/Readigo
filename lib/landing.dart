@@ -3,6 +3,7 @@ import 'package:testapp3/create_account.dart';
 import 'package:testapp3/components/reading_cat.dart';
 import 'package:testapp3/login_page.dart';
 import 'package:testapp3/util/constants.dart';
+import 'package:testapp3/util/apple_services.dart';
 import 'package:testapp3/util/google_services.dart';
 
 class LandingPage extends StatefulWidget {
@@ -14,21 +15,28 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   bool _googleLoading = false;
+  bool _appleLoading = false;
   bool _showAuthOptions = false;
 
   Future<void> _continueWithGoogle() async {
-    if (_googleLoading) return;
-
-    setState(() {
-      _googleLoading = true;
-    });
-
+    if (_googleLoading || _appleLoading) return;
+    setState(() => _googleLoading = true);
     final result = await GoogleServices.signInWithGoogle();
     if (!mounted) return;
+    setState(() => _googleLoading = false);
+    _showResult(result);
+  }
 
-    setState(() {
-      _googleLoading = false;
-    });
+  Future<void> _continueWithApple() async {
+    if (_googleLoading || _appleLoading) return;
+    setState(() => _appleLoading = true);
+    final result = await AppleServices.signInWithApple();
+    if (!mounted) return;
+    setState(() => _appleLoading = false);
+    _showResult(result);
+  }
+
+  void _showResult(SignInResult result) {
 
     if (result.succeeded || result.errorMessage == null) return;
 
@@ -306,8 +314,10 @@ class _LandingPageState extends State<LandingPage> {
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Use your email or Google to continue with Bookfania.',
+          Text(
+            AppleServices.isAvailable
+                ? 'Use Apple, Google, or your email to continue with Bookfania.'
+                : 'Use your email or Google to continue with Bookfania.',
             style: TextStyle(
               fontSize: 16,
               color: Constants.mutedInk,
@@ -315,6 +325,17 @@ class _LandingPageState extends State<LandingPage> {
             ),
           ),
           const SizedBox(height: 22),
+          if (AppleServices.isAvailable) ...[
+            _AuthMethodButton(
+              label:
+                  _appleLoading
+                      ? 'Connecting to Apple...'
+                      : 'Continue with Apple',
+              leading: _AuthMark.apple(),
+              onTap: _continueWithApple,
+            ),
+            const SizedBox(height: 14),
+          ],
           _AuthMethodButton(
             label:
                 _googleLoading
@@ -416,6 +437,12 @@ class _AuthMark extends StatelessWidget {
           color: Color(0xFF4285F4),
         ),
       ),
+    );
+  }
+
+  factory _AuthMark.apple() {
+    return const _AuthMark._(
+      Icon(Icons.apple, color: Colors.black, size: 24),
     );
   }
 

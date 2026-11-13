@@ -88,7 +88,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
           iconTheme: const IconThemeData(color: Constants.ink),
-          cardTheme: CardTheme(
+          // Floating snackbars stay above the system navigation bar on
+          // edge-to-edge Android (targetSdk 35+); fixed ones were hidden.
+          snackBarTheme: SnackBarThemeData(
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          cardTheme: CardThemeData(
             color: Constants.surface,
             elevation: 2,
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
